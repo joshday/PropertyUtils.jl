@@ -3,9 +3,9 @@
 This package provides composable utility functions/macros for working with types that have \
 `getproperty` methods.
 
-### `@with`
+## `@with`
 
-#### Replace items in an expression with properties from a `src`.
+### Replace items in an expression with properties from a `src`.
 
 Usage:
 
@@ -25,9 +25,9 @@ end
 result == 6
 ```
 
-### `joinprops`
+## `joinprops`
 
-#### Join sources to create a union of their props.
+### Join sources to create a union of their props.
 
 Example:
 
@@ -44,9 +44,9 @@ j.z == 4
 
 
 
-### `fields`
+## `fields`
 
-#### Map `getproperty` to `getfield`.
+### Map `getproperty` to `getfield`.
 
 Usage:
 
@@ -63,9 +63,9 @@ item.x == "hello!"
 f_item.x == 1
 ```
 
-### `indexes`
+## `indexes`
 
-#### Map `getproperty` to `getindex`.
+### Map `getproperty` to `getindex`.
 
 Usage:
 
@@ -75,7 +75,7 @@ d = Dict(:x => 1, :y => 2)
 indexes(d).y
 ```
 
-### Composability
+## Composability
 
 `@with`, `fields`, `indexes`, and `joinprops` play nicely together: 
 
@@ -87,7 +87,7 @@ end
 result == 16
 ```
 
-### `setproperty!`
+## `setproperty!`
 
 `setproperty!`, e.g. `thing.x = 1`, is supported if the underlying data structure supports mutation.
 
@@ -96,7 +96,7 @@ result == 16
 - `joinprops(x)`: `setproperty!` --> `setproperty!` on the first instance of the prop.  You cannot
     create new props.
 
-```
+```julia
 indexes(d).z = 3
 
 d[:z] == 3
