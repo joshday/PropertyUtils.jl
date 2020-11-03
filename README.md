@@ -73,11 +73,11 @@ indexes(d).y == 2
 `@with`, `fields`, `indexes`, and `joinprops` play nicely together: 
 
 ```julia
-result = @with joinprops(fields(A(10)), a, b, Dict(:z => 4)) begin 
-    x + y + z
-end
+result = @with joinprops(fields(A(10)), a, b, indexes(Dict(:twenty => 20))) begin 
+           x + y + z + twenty
+       end
 
-result == 16
+result == 36
 ```
 
 ## `setproperty!`
