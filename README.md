@@ -77,15 +77,32 @@ indexes(d).y
 
 ### Composability
 
-`@with`, `fields`, and `joinprops` play nicely together: 
+`@with`, `fields`, `indexes`, and `joinprops` play nicely together: 
 
 ```julia
-result = @with joinprops(fields(A(10)), a, b) begin 
-    x + y
+result = @with joinprops(fields(A(10)), a, b, Dict(:z => 4)) begin 
+    x + y + z
 end
 
-result == 12
+result == 16
 ```
+
+### `setproperty!`
+
+`setproperty!`, e.g. `thing.x = 1`, is supported if the underlying data structure supports mutation.
+
+- `indexes(x)`: `setproperty!` --> `setindex!`
+- `fields(x)`: `setproperty!` --> `setfield!`
+- `joinprops(x)`: `setproperty!` --> `setproperty!` on the first instance of the prop.  You cannot
+    create new props.
+
+```
+indexes(d).z = 3
+
+d[:z] == 3
+```
+
+
 
 ### Special Thanks
 

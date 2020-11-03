@@ -48,7 +48,9 @@ Map `getproperty` to `getindex`.
 # Example 
 
     d = Dict(:x => 1, :y => 2)
-    indexes(d).x
+    id = indexes(d)
+    id.x
+    id.z = 3
 """
 indexes(x) = Indexes(x)
 Base.propertynames(i::Indexes) = collect(keys(fields(i).item))
