@@ -10,7 +10,8 @@ end
 """
     joinprops(items...)
 
-Join items into a single struct with shared properties.  If multiple items have the same property,
+Join items into a single struct with shared properties.  The first item that has the requested 
+property will be used.
 
 # Example 
 
