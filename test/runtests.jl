@@ -20,15 +20,14 @@ end
 end
 
 
-
-@testset "Fields" begin 
+@testset "fields" begin 
     a = A(1)
     @test a.a == "hello"
-    @test Fields(a).a == 1
+    @test fields(a).a == 1
 end
 
-@testset "JoinProps" begin 
-    result = @with JoinProps(Fields(A(1)), B(2)) a + b
+@testset "joinprops" begin 
+    result = @with joinprops(fields(A(1)), B(2)) a + b
     @test result == 3
 end
 

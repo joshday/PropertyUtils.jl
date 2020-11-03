@@ -1,6 +1,6 @@
 module PropertyUtils
 
-export JoinProps, Fields, @with
+export joinprops, fields, @with
 
 #-----------------------------------------------------------------------------# joinprops
 """
@@ -19,11 +19,9 @@ Join items into a single struct with shared properties.  If multiple items have 
 struct JoinProps{T}
     items::T 
 end
-
-JoinProps(args...) = JoinProps(args)
-
+joinprops(args...) = JoinProps(args)
 Base.hasproperty(j::JoinProps, x::Symbol) = any(item -> hasproperty(item,x), getfield(j, :items))
-
+Base.propertynames(j::JoinProps) = reduce(union, propertynames.(getfield(j, :items)))
 function Base.getproperty(j::JoinProps, x::Symbol)
     for item in getfield(j, :items)
         hasproperty(item, x) && return getproperty(item, x)
@@ -52,9 +50,10 @@ Change the dot syntax for `x` from `getproperty` to `getfield`.
 struct Fields{T}
     item::T 
 end
-Base.hasproperty(f::Fields, x::Symbol) = hasfield(f, x)
-Base.getproperty(f::Fields, x::Symbol) = getfield(f, x)
-
+fields(x) = Fields(x)
+Base.propertynames(f::Fields{T}) where {T} = fieldnames(T)
+Base.hasproperty(f::Fields{T}, x::Symbol) where {T} = hasfield(T, x)
+Base.getproperty(f::Fields, x::Symbol) = getfield(getfield(f, :item), x)
 
 #-----------------------------------------------------------------------------# @with
 """
@@ -71,11 +70,8 @@ macro with(src, ex)
         eval(PropertyUtils.replace_props!($src, $(Meta.quot(ex))))
     end)
 end
-
 replace_props!(df, x) = x
-
 replace_props!(src, x::Symbol) = hasproperty(src, x) ? getproperty(src, x) : x
-
 function replace_props!(src, ex::Expr) 
     if ex.head === :call || ex.head === :.
         Expr(ex.head, vcat(ex.args[1], replace_props!.(Ref(src), ex.args[2:end]))...)
