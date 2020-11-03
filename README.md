@@ -7,15 +7,11 @@ This package provides composable utility functions/macros for working with types
 
 ### Replace items in an expression with properties from a `src`.
 
-Usage:
-
 ```julia
 @with src expr
 ```
 
 - For any Symbol `x` that appears in `expr` and `hasproperty(src, x)`, replace `x` with `getproperty(src, x)`.
-
-Example:
 
 ```julia
 z = 3
@@ -48,7 +44,6 @@ j.z == 4
 
 ### Map `getproperty` to `getfield`.
 
-Usage:
 
 ```julia
 struct A 
@@ -67,12 +62,10 @@ f_item.x == 1
 
 ### Map `getproperty` to `getindex`.
 
-Usage:
-
 ```julia
 d = Dict(:x => 1, :y => 2)
 
-indexes(d).y
+indexes(d).y == 2
 ```
 
 ## Composability
