@@ -46,7 +46,7 @@ j.z == 4
 
 ### `fields`
 
-#### Change an object's `getproperty` back to `getfield`.
+#### Map `getproperty` to `getfield`.
 
 Usage:
 
@@ -61,6 +61,18 @@ f_item = fields(a)
 
 item.x == "hello!"
 f_item.x == 1
+```
+
+### `indexes`
+
+#### Map `getproperty` to `getindex`.
+
+Usage:
+
+```julia
+d = Dict(:x => 1, :y => 2)
+
+indexes(d).y
 ```
 
 ### Composability

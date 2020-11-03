@@ -21,12 +21,18 @@ Join items into a single struct with shared properties.  If multiple items have 
     j.z == 4
 """
 joinprops(args...) = JoinProps(args)
-Base.propertynames(j::JoinProps) = reduce(union, propertynames.(getfield(j, :items)))
+Base.propertynames(j::JoinProps) = reduce(union, propertynames.(fields(j).items))
 function Base.getproperty(j::JoinProps, x::Symbol)
     for item in getfield(j, :items)
         hasproperty(item, x) && return getproperty(item, x)
     end
     error("$j has no property $x")
+end
+function Base.setproperty!(j::JoinProps, name::Symbol, x)
+    for item in getfield(j, :items)
+        hasproperty(item, name) && return setproperty!(item, name, x)
+    end
+    error("`setproperty!(::JoinProps, args...) cannot create new properties.")
 end
 
 #-----------------------------------------------------------------------------# Indexes
@@ -47,6 +53,7 @@ Map `getproperty` to `getindex`.
 indexes(x) = Indexes(x)
 Base.propertynames(i::Indexes) = collect(keys(fields(i).item))
 Base.getproperty(i::Indexes, x::Symbol) = getindex(getfield(i, :item), x)
+Base.setproperty!(i::Indexes, name::Symbol, x) = setindex!(getfield(i, :item), x, name)
 
 
 #-----------------------------------------------------------------------------# Fields
@@ -73,6 +80,7 @@ Map `getproperty` to `getfield`.
 fields(x) = Fields(x)
 Base.propertynames(f::Fields{T}) where {T} = fieldnames(T)
 Base.getproperty(f::Fields, x::Symbol) = getfield(getfield(f, :item), x)
+Base.setproperty!(f::Fields, name::Symbol, x) = setfield!(getfield(f, :item), name, x)
 
 #-----------------------------------------------------------------------------# @with
 """
