@@ -1,10 +1,14 @@
 module PropertyUtils
 
-export joinprops, fields, @with
+export joinprops, fields, indexes, @with
 
 #-----------------------------------------------------------------------------# joinprops
+struct JoinProps{T}
+    items::T 
+end
+
 """
-    JoinProps(items...)
+    joinprops(items...)
 
 Join items into a single struct with shared properties.  If multiple items have the same property,
 
@@ -12,15 +16,11 @@ Join items into a single struct with shared properties.  If multiple items have 
 
     a = (x = 1, y = 2)
     b = (x = 3, z = 4)
-    j = JoinProps(a,b)
+    j = joinprops(a,b)
     j.x == 1
     j.z == 4
 """
-struct JoinProps{T}
-    items::T 
-end
 joinprops(args...) = JoinProps(args)
-Base.hasproperty(j::JoinProps, x::Symbol) = any(item -> hasproperty(item,x), getfield(j, :items))
 Base.propertynames(j::JoinProps) = reduce(union, propertynames.(getfield(j, :items)))
 function Base.getproperty(j::JoinProps, x::Symbol)
     for item in getfield(j, :items)
@@ -29,12 +29,35 @@ function Base.getproperty(j::JoinProps, x::Symbol)
     error("$j has no property $x")
 end
 
+#-----------------------------------------------------------------------------# Indexes
+struct Indexes{T}
+    item::T 
+end
+
+"""
+    indexes(x)
+
+Map `getproperty` to `getindex`.
+
+# Example 
+
+    d = Dict(:x => 1, :y => 2)
+    indexes(d).x
+"""
+indexes(x) = Indexes(x)
+Base.propertynames(i::Indexes) = collect(keys(fields(i).item))
+Base.getproperty(i::Indexes, x::Symbol) = getindex(getfield(i, :item), x)
+
 
 #-----------------------------------------------------------------------------# Fields
-"""
-    Fields(x)
+struct Fields{T}
+    item::T 
+end
 
-Change the dot syntax for `x` from `getproperty` to `getfield`.
+"""
+    fields(x)
+
+Map `getproperty` to `getfield`.
 
 # Example 
     struct A 
@@ -45,14 +68,10 @@ Change the dot syntax for `x` from `getproperty` to `getfield`.
     a = A(1)
     a.x == "hello"
 
-    Fields(a).x == 1
+    fields(a).x == 1
 """
-struct Fields{T}
-    item::T 
-end
 fields(x) = Fields(x)
 Base.propertynames(f::Fields{T}) where {T} = fieldnames(T)
-Base.hasproperty(f::Fields{T}, x::Symbol) where {T} = hasfield(T, x)
 Base.getproperty(f::Fields, x::Symbol) = getfield(getfield(f, :item), x)
 
 #-----------------------------------------------------------------------------# @with

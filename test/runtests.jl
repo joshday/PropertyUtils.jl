@@ -19,11 +19,15 @@ end
     @test result == 3
 end
 
-
 @testset "fields" begin 
     a = A(1)
     @test a.a == "hello"
     @test fields(a).a == 1
+end
+
+@testset "indexes" begin 
+     d = Dict(:x => 1, :y => 2)
+     @test indexes(d).x == 1
 end
 
 @testset "joinprops" begin 
