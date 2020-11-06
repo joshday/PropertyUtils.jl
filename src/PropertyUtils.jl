@@ -110,3 +110,7 @@ function replace_props!(src, ex::Expr)
     end
 end
 end
+
+macro with(src, interp, ex)
+    @info interp
+end
