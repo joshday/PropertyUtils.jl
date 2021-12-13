@@ -110,6 +110,6 @@ function _replace(src, ex::Expr)
     ex
 end
 _replace(src, ex::Symbol) = :(hasproperty($src, $(QuoteNode(ex))) ? $src.$ex : $ex)
-replace(src, ex) = ex
+_replace(src, ex) = ex
 
 end #module
