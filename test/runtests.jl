@@ -41,6 +41,8 @@ end
     j.a = 2
     result2 = @with j a + b
     @test result2 == 4
+    result3 = @with j a + b + 1 
+    @test result3 == 5
 end
 
 end
