@@ -89,28 +89,27 @@ Base.setproperty!(f::Fields, name::Symbol, x) = setfield!(getfield(f, :item), na
 """
     @with src expr
 
-For every symbol `x` in `expr`, replace it with `getproperty(src, x)` if `hasproperty(src, x)`.
+For every symbol `x` in `expr`, replace it with `hasproperty(src, x) ? src.x : x`
 
 # Example 
 
     @with (x = 1, y = 2) x + y
 """
 macro with(src, ex)
-    esc(quote
-        eval(PropertyUtils.replace_props!($src, $(Meta.quot(ex))))
-    end)
-end
-replace_props!(df, x) = x
-replace_props!(src, x::Symbol) = hasproperty(src, x) ? getproperty(src, x) : x
-function replace_props!(src, ex::Expr) 
-    if ex.head === :call || ex.head === :.
-        Expr(ex.head, vcat(ex.args[1], replace_props!.(Ref(src), ex.args[2:end]))...)
-    else
-        Expr(ex.head, replace_props!.(Ref(src), ex.args)...)
+    temp = gensym()
+    quote 
+        $(esc(temp)) = $(esc(src))
+        $(esc(PropertyUtils._replace(temp, ex)))
     end
 end
-end
 
-macro with(src, interp, ex)
-    @info interp
+function _replace(src, ex::Expr)
+    if ex.head ∉ [:., :ref]
+        ex.args[2:end] .= _replace.(Ref(src), ex.args[2:end])
+    end
+    ex
 end
+_replace(src, ex::Symbol) = :(hasproperty($src, $(QuoteNode(ex))) ? $src.$ex : $ex)
+replace(src, ex) = ex
+
+end #module
