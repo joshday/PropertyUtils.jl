@@ -89,11 +89,14 @@ Base.setproperty!(f::Fields, name::Symbol, x) = setfield!(getfield(f, :item), na
 """
     @with src expr
 
-For every symbol `x` in `expr`, replace it with `hasproperty(src, x) ? src.x : x`
+- For every symbol `x` in `expr`, replace it with `hasproperty(src, x) ? src.x : x`.  
+- use `identity` to leave an identifier untouched.
 
 # Example 
 
-    @with (x = 1, y = 2) x + y
+    x = 3
+    nt = (x = 1, y = 2)
+    @with nt x + y + identity(x)  # 6
 """
 macro with(src, ex)
     temp = gensym()
@@ -104,8 +107,8 @@ macro with(src, ex)
 end
 
 function _replace(src, ex::Expr)
-    if ex.head ∉ [:., :ref]
-        ex.args[2:end] .= _replace.(Ref(src), ex.args[2:end])
+    if !(ex.head === :call && ex.args[1] === :identity)
+        ex.args .= _replace.(Ref(src), ex.args)
     end
     ex
 end
