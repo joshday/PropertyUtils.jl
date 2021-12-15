@@ -1,7 +1,7 @@
 name = "PropertyUtils"
 uuid = "7eaf9d98-b424-4a14-afcb-82e7a14ea1c6"
 authors = ["joshday <emailjoshday@gmail.com> and contributors"]
-version = "0.1.1"
+version = "0.1.2"
 
 [compat]
 julia = "1"
