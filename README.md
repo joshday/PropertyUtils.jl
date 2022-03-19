@@ -4,7 +4,7 @@ This package lets you:
 
 1. Refer to properties by name only (`@with`).
 2. Join together properties of different structs (`joinprops`).
-3. Change `getproperty` (and `setproperty`) to `getfield` or `getindex` (`fields`, `indexes`)
+3. Change `getproperty` (and `setproperty`) to `getfield` or `getindex` (`fields`, `indexes`).
 
 
 <br><br>
