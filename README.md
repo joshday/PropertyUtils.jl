@@ -1,7 +1,11 @@
 <h1 align="center">PropertyUtils</h1>
 
-This package provides composable utility functions/macros for working with types that have \
-`getproperty` methods.
+This package lets you:
+
+1. Refer to properties by name only (`@with`).
+2. Join together properties of different structs (`joinprops`).
+3. Change `getproperty` (and `setproperty`) to `getfield` or `getindex` (`fields`, `indexes`)
+
 
 <br><br>
 
