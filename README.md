@@ -1,7 +1,9 @@
-# PropertyUtils
+<h1 align="center">PropertyUtils</h1>
 
 This package provides composable utility functions/macros for working with types that have \
 `getproperty` methods.
+
+<br><br>
 
 ## `@with`
 
@@ -15,11 +17,13 @@ This package provides composable utility functions/macros for working with types
 
 ```julia
 z = 3
-result = @with (x = 1, y = 2) begin 
+result = @with (x = 1, y = 2) begin
     x + y + z
 end
 result == 6
 ```
+
+<br><br>
 
 ## `joinprops`
 
@@ -38,7 +42,7 @@ j.y == 2  # non-unique props are taken from the first argument that has it
 j.z == 4
 ```
 
-
+<br><br>
 
 ## `fields`
 
@@ -46,8 +50,8 @@ j.z == 4
 
 
 ```julia
-struct A 
-    x::Int 
+struct A
+    x::Int
 end
 Base.getproperty(::A, x::Symbol) = "hello!"
 
@@ -57,6 +61,8 @@ f_item = fields(a)
 item.x == "hello!"
 f_item.x == 1
 ```
+
+<br><br>
 
 ## `indexes`
 
@@ -68,19 +74,23 @@ d = Dict(:x => 1, :y => 2)
 indexes(d).y == 2
 ```
 
+<br><br>
+
 ## Composability
 
-`@with`, `fields`, `indexes`, and `joinprops` play nicely together: 
+`@with`, `fields`, `indexes`, and `joinprops` play nicely together:
 
 ```julia
-result = @with joinprops(fields(A(10)), a, b, indexes(Dict(:twenty => 20))) begin 
+result = @with joinprops(fields(A(10)), a, b, indexes(Dict(:twenty => 20))) begin
            x + y + z + twenty
        end
 
 result == 36
 ```
 
-## `setproperty!`
+<br><br>
+
+## How this all works with `setproperty!`
 
 `setproperty!`, e.g. `thing.x = 1`, is supported if the underlying data structure supports mutation.
 
@@ -95,8 +105,8 @@ indexes(d).z = 3
 d[:z] == 3
 ```
 
+<br><br>
 
-
-### Special Thanks
+## Special Thanks
 
 This package borrows ideas from [StatsModels.jl](https://github.com/JuliaStats/StatsModels.jl), [DataFramesMeta.jl](https://github.com/JuliaData/DataFramesMeta.jl), [StaticModules.jl](https://github.com/MasonProtter/StaticModules.jl), and [StatsPlots.jl](https://github.com/JuliaPlots/StatsPlots.jl), which are all fantastic.
