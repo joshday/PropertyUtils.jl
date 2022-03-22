@@ -4,16 +4,16 @@ export joinprops, fields, indexes, @with
 
 #-----------------------------------------------------------------------------# joinprops
 struct JoinProps{T}
-    items::T 
+    items::T
 end
 
 """
     joinprops(items...)
 
-Join items into a single struct with shared properties.  The first item that has the requested 
+Join items into a single struct with shared properties.  The first item that has the requested
 property will be used.
 
-# Example 
+# Example
 
     a = (x = 1, y = 2)
     b = (x = 3, z = 4)
@@ -38,7 +38,7 @@ end
 
 #-----------------------------------------------------------------------------# Indexes
 struct Indexes{T}
-    item::T 
+    item::T
 end
 
 """
@@ -46,7 +46,7 @@ end
 
 Map `getproperty` to `getindex`.
 
-# Example 
+# Example
 
     d = Dict(:x => 1, :y => 2)
     id = indexes(d)
@@ -61,7 +61,7 @@ Base.setproperty!(i::Indexes, name::Symbol, x) = setindex!(getfield(i, :item), x
 
 #-----------------------------------------------------------------------------# Fields
 struct Fields{T}
-    item::T 
+    item::T
 end
 
 """
@@ -69,9 +69,9 @@ end
 
 Map `getproperty` to `getfield`.
 
-# Example 
-    struct A 
-        x::Int 
+# Example
+    struct A
+        x::Int
     end
     Base.getproperty(a::A, x::Symbol) = "hello"
 
@@ -89,10 +89,10 @@ Base.setproperty!(f::Fields, name::Symbol, x) = setfield!(getfield(f, :item), na
 """
     @with src expr
 
-- For every symbol `x` in `expr`, replace it with `hasproperty(src, x) ? src.x : x`.  
+- For every symbol `x` in `expr`, replace it with `hasproperty(src, x) ? src.x : x`.
 - use `identity` to leave an identifier untouched.
 
-# Example 
+# Example
 
     x = 3
     nt = (x = 1, y = 2)
@@ -100,14 +100,18 @@ Base.setproperty!(f::Fields, name::Symbol, x) = setfield!(getfield(f, :item), na
 """
 macro with(src, ex)
     temp = gensym()
-    quote 
+    quote
         $(esc(temp)) = $(esc(src))
         $(esc(PropertyUtils._replace(temp, ex)))
     end
 end
 
 function _replace(src, ex::Expr)
-    if !(ex.head === :call && ex.args[1] === :identity)
+    if (ex.head === :kw) || ex.head === :(=)
+        ex.args[2] = _replace(src, ex.args[2])
+    elseif ex.head === :call && !(ex.args[1] === :identity)
+        ex.args[2:end] .= _replace.(Ref(src), ex.args[2:end])
+    else
         ex.args .= _replace.(Ref(src), ex.args)
     end
     ex
