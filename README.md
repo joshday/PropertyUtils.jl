@@ -17,7 +17,7 @@ This package lets you:
 @with src expr
 ```
 
-- Every valid identifier `x` in `expr` gets changed to `hasproperty(src) ? src.x : x`
+- Every valid identifier `x` in `expr` gets changed to `hasproperty(src, :x) ? src.x : x`
 
 ```julia
 z = 3
