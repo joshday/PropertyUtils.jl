@@ -17,7 +17,7 @@ This package lets you:
 @with src expr
 ```
 
-- For any Symbol `x` that appears in `expr` and `hasproperty(src, x)`, replace `x` with `getproperty(src, x)`.
+- Every valid identifier `x` in `expr` gets changed to `hasproperty(src) ? src.x : x`
 
 ```julia
 z = 3

@@ -99,7 +99,11 @@ Base.setproperty!(f::Fields, name::Symbol, x) = setfield!(getfield(f, :item), na
     @with nt x + y + identity(x)  # 6
 """
 macro with(src, ex)
-    esc(PropertyUtils._replace(src, ex))
+    temp = gensym()
+    quote
+        $(esc(temp)) = $(esc(src))
+        $(esc(PropertyUtils._replace(temp, ex)))
+    end
 end
 
 function _replace(src, ex::Expr)
