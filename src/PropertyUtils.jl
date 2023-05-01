@@ -99,11 +99,7 @@ Base.setproperty!(f::Fields, name::Symbol, x) = setfield!(getfield(f, :item), na
     @with nt x + y + identity(x)  # 6
 """
 macro with(src, ex)
-    temp = gensym()
-    quote
-        $(esc(temp)) = $(esc(src))
-        $(esc(PropertyUtils._replace(temp, ex)))
-    end
+    esc(PropertyUtils._replace(src, ex))
 end
 
 function _replace(src, ex::Expr)
@@ -116,7 +112,15 @@ function _replace(src, ex::Expr)
     end
     ex
 end
-_replace(src, ex::Symbol) = :(hasproperty($src, $(QuoteNode(ex))) ? $src.$ex : $ex)
+
+function _replace(src, ex::Symbol)
+    if Base.isidentifier(ex)
+        return :(hasproperty($src, $(QuoteNode(ex))) ? $src.$ex : $ex)
+    else
+        return ex
+    end
+end
+
 _replace(src, ex) = ex
 
 end #module

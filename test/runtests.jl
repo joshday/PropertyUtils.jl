@@ -19,6 +19,12 @@ end
     @test result == 3
     result2 = @with (x=1,y=2) (x=y,y=x)
     @test result2 == (x=2,y=1)
+
+    # @testset "@with @." begin
+    #     data = [(x=1, y=2), (x=2, y=3)]
+    #     result = @with data @. data[x > 1]
+
+    # end
 end
 
 @testset "fields" begin
