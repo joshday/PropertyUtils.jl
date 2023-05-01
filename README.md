@@ -2,9 +2,11 @@
 
 This package lets you:
 
-1. Refer to properties by name only (`@with`).
-2. Join together properties of different structs (`joinprops`).
-3. Change `getproperty` (and `setproperty`) to `getfield` or `getindex` (`fields`, `indexes`).
+1. Change `getproperty` to `getfield` via `Fields(x)`
+2. Change `getproperty` to `getindex` via `Indexes(x)` (most useful for `AbstractDict{Symbol, Any}`).
+3. Similarly, `Fields`, and `Indexes` change the behavior of `setproperty!`.
+4. Replace itmes in an expression with properties from a `src` via `@with src expr`.
+5. Join together properties of different objects via `JoinProps`.
 
 
 <br><br>
@@ -29,7 +31,7 @@ result == 6
 
 <br><br>
 
-## `joinprops`
+## `JoinProps`
 
 ### Join sources to create a union of their props.
 
@@ -39,7 +41,7 @@ Example:
 a = (x = 1, y = 2)
 b = (y = 3, z = 4)
 
-j = joinprops(a, b)
+j = JoinProps(a, b)
 
 j.x == 1
 j.y == 2  # non-unique props are taken from the first argument that has it
@@ -48,7 +50,7 @@ j.z == 4
 
 <br><br>
 
-## `fields`
+## `Fields`
 
 ### Map `getproperty` to `getfield`.
 
@@ -60,7 +62,7 @@ end
 Base.getproperty(::A, x::Symbol) = "hello!"
 
 item = A(1)
-f_item = fields(a)
+f_item = Fields(a)
 
 item.x == "hello!"
 f_item.x == 1
@@ -68,24 +70,24 @@ f_item.x == 1
 
 <br><br>
 
-## `indexes`
+## `Indexes`
 
 ### Map `getproperty` to `getindex`.
 
 ```julia
 d = Dict(:x => 1, :y => 2)
 
-indexes(d).y == 2
+Indexes(d).y == 2
 ```
 
 <br><br>
 
 ## Composability
 
-`@with`, `fields`, `indexes`, and `joinprops` play nicely together:
+`@with`, `Fields`, `Indexes`, and `JoinProps` play nicely together:
 
 ```julia
-result = @with joinprops(fields(A(10)), a, b, indexes(Dict(:twenty => 20))) begin
+result = @with JoinProps(Fields(A(10)), a, b, Indexes(Dict(:twenty => 20))) begin
            x + y + z + twenty
        end
 
@@ -98,13 +100,13 @@ result == 36
 
 `setproperty!`, e.g. `thing.x = 1`, is supported if the underlying data structure supports mutation.
 
-- `indexes(x)`: `setproperty!` --> `setindex!`
-- `fields(x)`: `setproperty!` --> `setfield!`
-- `joinprops(x)`: `setproperty!` --> `setproperty!` on the first instance of the prop.  You cannot
+- `Indexes(x)`: `setproperty!` --> `setindex!`
+- `Fields(x)`: `setproperty!` --> `setfield!`
+- `JoinProps(x)`: `setproperty!` --> `setproperty!` on the first instance of the prop.  You cannot
     create new props.
 
 ```julia
-indexes(d).z = 3
+Indexes(d).z = 3
 
 d[:z] == 3
 ```
