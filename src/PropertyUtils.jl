@@ -1,14 +1,10 @@
 module PropertyUtils
 
-export joinprops, fields, indexes, @with
+export @with, JoinProps, Fields, Indexes
 
 #-----------------------------------------------------------------------------# joinprops
-struct JoinProps{T}
-    items::T
-end
-
 """
-    joinprops(items...)
+    JoinProps(items...)
 
 Join items into a single struct with shared properties.  The first item that has the requested
 property will be used.
@@ -21,8 +17,13 @@ property will be used.
     j.x == 1
     j.z == 4
 """
-joinprops(args...) = JoinProps(args)
-Base.propertynames(j::JoinProps) = reduce(union, propertynames.(fields(j).items))
+struct JoinProps{T}
+    items::T
+end
+JoinProps(items...) = JoinProps(items)
+
+@deprecate joinprops(args...) JoinProps(args...)
+Base.propertynames(j::JoinProps) = reduce(union, propertynames.(Fields(j).items))
 function Base.getproperty(j::JoinProps, x::Symbol)
     for item in getfield(j, :items)
         hasproperty(item, x) && return getproperty(item, x)
@@ -37,35 +38,30 @@ function Base.setproperty!(j::JoinProps, name::Symbol, x)
 end
 
 #-----------------------------------------------------------------------------# Indexes
-struct Indexes{T}
-    item::T
-end
-
 """
-    indexes(x)
+    Indexes(x)
 
 Map `getproperty` to `getindex`.
 
 # Example
 
     d = Dict(:x => 1, :y => 2)
-    id = indexes(d)
+    id = Indexes(d)
     id.x
     id.z = 3
 """
-indexes(x) = Indexes(x)
+struct Indexes{T}
+    item::T
+end
+@deprecate indexes(x) Indexes(x)
 Base.propertynames(i::Indexes) = collect(keys(fields(i).item))
 Base.getproperty(i::Indexes, x::Symbol) = getindex(getfield(i, :item), x)
 Base.setproperty!(i::Indexes, name::Symbol, x) = setindex!(getfield(i, :item), x, name)
 
 
 #-----------------------------------------------------------------------------# Fields
-struct Fields{T}
-    item::T
-end
-
 """
-    fields(x)
+    Fields(x)
 
 Map `getproperty` to `getfield`.
 
@@ -78,9 +74,13 @@ Map `getproperty` to `getfield`.
     a = A(1)
     a.x == "hello"
 
-    fields(a).x == 1
+    Fields(a).x == 1
 """
-fields(x) = Fields(x)
+struct Fields{T}
+    item::T
+end
+
+@deprecate fields(x) Fields(x)
 Base.propertynames(f::Fields{T}) where {T} = fieldnames(T)
 Base.getproperty(f::Fields, x::Symbol) = getfield(getfield(f, :item), x)
 Base.setproperty!(f::Fields, name::Symbol, x) = setfield!(getfield(f, :item), name, x)
