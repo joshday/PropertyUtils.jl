@@ -5,7 +5,7 @@ This package lets you:
 1. Change `getproperty` to `getfield` via `Fields(x)`
 2. Change `getproperty` to `getindex` via `Indexes(x)` (most useful for `AbstractDict{Symbol, Any}`).
 3. Similarly, `Fields`, and `Indexes` change the behavior of `setproperty!`.
-4. Replace itmes in an expression with properties from a `src` via `@with src expr`.
+4. Replace items in an expression with properties from a `src` via `@with src expr`.
 5. Join together properties of different objects via `JoinProps`.
 
 
