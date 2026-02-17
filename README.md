@@ -1,3 +1,8 @@
+[![CI](https://github.com/joshday/PropertyUtils.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/joshday/PropertyUtils.jl/actions/workflows/CI.yml)
+[![Docs Build](https://github.com/joshday/PropertyUtils.jl/actions/workflows/Docs.yml/badge.svg)](https://github.com/joshday/PropertyUtils.jl/actions/workflows/Docs.yml)
+[![Stable Docs](https://img.shields.io/badge/docs-stable-blue)](https://joshday.github.io/PropertyUtils.jl/stable/)
+[![Dev Docs](https://img.shields.io/badge/docs-dev-blue)](https://joshday.github.io/PropertyUtils.jl/dev/)
+
 <h1 align="center">PropertyUtils</h1>
 
 This package lets you:
